@@ -1,22 +1,20 @@
 const axios = require("axios");
 const SpotifyToken = require("../modle/spotifyToken");
-// const { saveTracksToDB } = require("../utils/trackUtils");
+const Track = require("../modle/track");
 
 const fetchTopTracks = async (req, res) => {
   try {
     const spotifyUserId = req.user.sub; // Assuming JWT contains Spotify user ID
-    console.log(spotifyUserId,"spotifyUserId from the re.user.sub")
 
     // 1. Get the stored Spotify access token from DB
     const tokenDoc = await SpotifyToken.findOne({ spotifyUserId });
-    console.log(tokenDoc,"tokenDoc from the database")
 
     if (!tokenDoc) {
       return res.status(401).json({ error: "Spotify token not found" });
     }
-    
+
     const { accessToken } = tokenDoc;
-    console.log(accessToken,"accessToken in fetch track")
+
     // 2. Use token to call Spotify top tracks API
     const topTracksRes = await axios.get("https://api.spotify.com/v1/me/top/tracks?limit=5", {
       headers: {
@@ -24,10 +22,14 @@ const fetchTopTracks = async (req, res) => {
       },
     });
 
-    console.log(topTracksRes,"topTracksRes from spotify api")
-    
+    const items = topTracksRes.data.items;
+
+    if (!items || items.length === 0) {
+      return res.json({ message: "No top tracks found in your playlist", tracks: [] });
+    }
+
     // 3. Format the minimal track info
-    const minimalTracks = topTracksRes.data.items.map((track) => ({
+    const minimalTracks = items.map((track) => ({
       name: track.name,
       artist: track.artists.map((a) => a.name).join(", "),
       spotifyUserId,
@@ -35,7 +37,7 @@ const fetchTopTracks = async (req, res) => {
     }));
 
     // 4. Save to DB
-    // await saveTracksToDB(minimalTracks);
+    await saveTracksToDB(minimalTracks);
 
     return res.json({ message: "Top tracks saved", tracks: minimalTracks });
   } catch (error) {
@@ -44,5 +46,28 @@ const fetchTopTracks = async (req, res) => {
   }
 };
 
+const saveTracksToDB = async (tracks) => {
+  if (!tracks || tracks.length === 0) return;
+
+  const spotifyUserId = tracks[0].spotifyUserId;
+
+  // Clear previous tracks for user (optional)
+  await Track.deleteMany({ spotifyUserId });
+  
+  const tracksWithAdvice = await Promise.all(
+    tracks.map(async (track) => {
+      try {
+        const response = await axios.get("https://api.adviceslip.com/advice");
+        const advice = response.data.slip.advice;
+        return { ...track, advice };
+      } catch (err) {
+        console.error("Failed to fetch advice:", err.message);
+        return { ...track, advice: "No advice available" };
+      }
+    })
+  );
+
+  await Track.insertMany(tracksWithAdvice);
+};
 
 module.exports = { fetchTopTracks };

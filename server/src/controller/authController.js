@@ -46,7 +46,7 @@ const spotifyCallback = async (req, res) => {
     );
 
     const { access_token, refresh_token, expires_in } = tokenResponse.data; // one token from spotify
-    console.log(response.data,"response data from call back fun")
+    console.log(tokenResponse.data,"response data from call back fun")
     const user = await getUserInfoFromSpotify(access_token);
 
     //save user data to DB
