@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 const Dashboard = () => {
   const [user, setUser] = useState({ name: "", email: "", id: "" });
   const [topTracks, setTopTracks] = useState([]);
-
+  const [message, setMessage] = useState("");
   const location = useLocation();
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const Dashboard = () => {
       setUser({ name, email, id });
 
       // Fetch top tracks using fetch API
-      fetch("http://localhost:3000/top-track", {
+      fetch("http://localhost:3000/top-tracks", {
         method: "GET",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -31,6 +31,7 @@ const Dashboard = () => {
         })
         .then((data) => {
           setTopTracks(data.tracks || []);
+          setMessage(data.message);
         })
         .catch((err) => {
           console.error("Fetch error:", err.message);
@@ -52,15 +53,18 @@ const Dashboard = () => {
 
       <h2 style={{ marginTop: "2rem" }}>🎧 Top 5 Spotify Tracks</h2>
       {topTracks.length > 0 ? (
-        <ol style={{ textAlign: "left", maxWidth: "600px", margin: "1rem auto" }}>
+        <ol
+          style={{ textAlign: "left", maxWidth: "600px", margin: "1rem auto" }}
+        >
           {topTracks.map((track, index) => (
             <li key={index}>
-              <strong>{track.name}</strong> by {track.artists?.map((a) => a.name).join(", ")}
+              <strong>{track.name}</strong> by{" "}
+              {track.artists?.map((a) => a.name).join(", ")}
             </li>
           ))}
         </ol>
       ) : (
-        <p>Loading top tracks...</p>
+        <p>{message}</p>
       )}
     </div>
   );

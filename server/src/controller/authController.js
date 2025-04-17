@@ -81,16 +81,6 @@ const spotifyCallback = async (req, res) => {
     const jwtToken = generateJWT(user.id);
     const frontendRedirectUri = "http://localhost:3001/dashboard";
 
-    // return res.json({
-    //   message: "Login successful",
-    //   jwt: jwtToken, // one token from jwt
-    //   spotifyUser: {
-    //     id: user.id,
-    //     email: user.email,
-    //     display_name: user.display_name,
-    //   },
-    // });
-
     res.redirect(`${frontendRedirectUri}?token=${jwtToken}&name=${encodeURIComponent(user.display_name)}&id=${user.id}&email=${encodeURIComponent(user.email)}`);
 
   } catch (error) {

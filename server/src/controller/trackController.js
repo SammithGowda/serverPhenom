@@ -37,9 +37,10 @@ const fetchTopTracks = async (req, res) => {
     }));
 
     // 4. Save to DB
-    await saveTracksToDB(minimalTracks);
-
-    return res.json({ message: "Top tracks saved", tracks: minimalTracks });
+    const tracksWithAdvice = await saveTracksToDB(minimalTracks);
+    
+    
+    return res.json({ message: "Top tracks saved", tracks: tracksWithAdvice });
   } catch (error) {
     console.error("Fetch top tracks error:", error.response?.data || error.message);
     res.status(500).json({ error: "Failed to fetch or save tracks" });
@@ -68,6 +69,7 @@ const saveTracksToDB = async (tracks) => {
   );
 
   await Track.insertMany(tracksWithAdvice);
+  return tracksWithAdvice
 };
 
 module.exports = { fetchTopTracks };
