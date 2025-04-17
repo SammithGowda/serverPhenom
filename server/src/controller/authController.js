@@ -24,7 +24,7 @@ const loginRedirect = async (req, res) => {
 
 const spotifyCallback = async (req, res) => {
   const code = req.query.code;
-  console.log(code,"code in call back first log")
+
   if (!code) return res.status(400).send("Missing authorization code");
 
   try {
@@ -46,7 +46,7 @@ const spotifyCallback = async (req, res) => {
     );
 
     const { access_token, refresh_token, expires_in } = tokenResponse.data; // one token from spotify
-    console.log(tokenResponse.data,"response data from call back fun")
+
     const user = await getUserInfoFromSpotify(access_token);
 
     //save user data to DB
@@ -79,16 +79,20 @@ const spotifyCallback = async (req, res) => {
     );
 
     const jwtToken = generateJWT(user.id);
+    const frontendRedirectUri = "http://localhost:3001/dashboard";
 
-    return res.json({
-      message: "Login successful",
-      jwt: jwtToken, // one token from jwt
-      spotifyUser: {
-        id: user.id,
-        email: user.email,
-        display_name: user.display_name,
-      },
-    });
+    // return res.json({
+    //   message: "Login successful",
+    //   jwt: jwtToken, // one token from jwt
+    //   spotifyUser: {
+    //     id: user.id,
+    //     email: user.email,
+    //     display_name: user.display_name,
+    //   },
+    // });
+
+    res.redirect(`${frontendRedirectUri}?token=${jwtToken}&name=${encodeURIComponent(user.display_name)}&id=${user.id}&email=${encodeURIComponent(user.email)}`);
+
   } catch (error) {
     console.error("Callback error:", error.response?.data || error.message);
     return res.status(500).send("OAuth callback failed");
