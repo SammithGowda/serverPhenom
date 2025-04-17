@@ -4,11 +4,6 @@ A full-stack application that allows users to log in with their Spotify account 
 
 ---
 
-## 🌐 Live Demo (Optional)
-
-> You can add a link here if you've deployed the project.
-
----
 
 ## 🚀 Tech Stack
 
@@ -39,14 +34,14 @@ git clone https://github.com/SammithGowda/serverPhenom.git
 cd serverPhenom
 
 ```
-### 2 run server
+### 2. run server
 ```bash
 cd server
 npm install
 
 ```
 
-### 3 run client
+### 3. run client
 ```bash
 cd ../client
 npm install
