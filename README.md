@@ -47,6 +47,13 @@ cd ../client
 npm install
 
 ```
-
+### 4. env setup
+```bash
+SPOTIFY_CLIENT_ID=your_spotify_client_id
+SPOTIFY_CLIENT_SECRET=your_spotify_client_secret
+SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
+JWT_SECRET=your_jwt_secret
+MONGODB_URI=mongodb://localhost:27017/spotify-auth
+```
 
 
