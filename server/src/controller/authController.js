@@ -89,9 +89,5 @@ const spotifyCallback = async (req, res) => {
   }
 };
 
-const getMe = async (req, res) => {
-  const userId = req.user.sub;
-  res.json({ message: `Hello from protected route, user ${userId}` });
-};
 
 module.exports = { loginRedirect, spotifyCallback, getMe };

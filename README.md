@@ -55,5 +55,11 @@ SPOTIFY_REDIRECT_URI=http://localhost:3000/callback
 JWT_SECRET=your_jwt_secret
 MONGODB_URI=mongodb://localhost:27017/spotify-auth
 ```
+### 5. end point
+```bash
+/login	GET	Redirects to Spotify OAuth
 
+/callback	GET	Handles OAuth callback
+
+/top-track	GET	Returns user's top 5 tracks
 
