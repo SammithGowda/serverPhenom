@@ -37,3 +37,21 @@ A full-stack application that allows users to log in with their Spotify account 
 ```bash
 git clone https://github.com/SammithGowda/serverPhenom.git
 cd serverPhenom
+
+```
+### 2 run server
+```bash
+cd server
+npm install
+
+```
+
+### 3 run client
+```bash
+cd ../client
+npm install
+
+```
+
+
+
